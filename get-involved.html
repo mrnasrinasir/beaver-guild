@@ -75,23 +75,24 @@
 <div style="display: flex; flex-direction: column; gap: 12px">
 <span style="font-family: 'Pixelify Sans', monospace; font-size: 16px; color: #173F35; background: #B8C8AD; padding: 6px 10px; align-self: flex-start">Quest logged</span>
 <p style="margin: 0; font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 24px; color: #173F35">Thank you. We will be in touch about what you want to achieve.</p>
-<p style="margin: 0; font-size: 15px">Prototype only: nothing has been sent.</p>
 <button type="button" id="bg-reset" style="align-self: flex-start; min-height: 44px; padding: 0 20px; background: transparent; color: #173F35; border: 2px solid #173F35; font-family: Figtree, Arial, sans-serif; font-weight: 600; font-size: 16px; cursor: pointer">Back to the form</button>
 </div>
 </div>
-<div id="bg-form">
+<form id="bg-form" name="express-interest" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+<input type="hidden" name="form-name" value="express-interest">
+<p hidden><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
 <div style="display: flex; flex-direction: column; gap: 18px">
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="bg-name" style="font-weight: 600; color: #173F35">Your name</label>
-<input id="bg-name" type="text" autocomplete="name" style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
+<input id="bg-name" name="name" type="text" autocomplete="name" required style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="bg-email" style="font-weight: 600; color: #173F35">Email</label>
-<input id="bg-email" type="email" autocomplete="email" style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
+<input id="bg-email" name="email" type="email" autocomplete="email" required style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="bg-role" style="font-weight: 600; color: #173F35">I am mainly a…</label>
-<select id="bg-role" style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
+<select id="bg-role" name="role" style="min-height: 44px; padding: 0 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B">
 <option>Curious learner</option>
 <option>Existing trainer</option>
 <option>Practitioner who wants to teach</option>
@@ -101,12 +102,13 @@
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="bg-goal" style="font-weight: 600; color: #173F35">What do you want to achieve?</label>
-<textarea id="bg-goal" rows="4" style="padding: 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B; resize: vertical"></textarea>
+<textarea id="bg-goal" name="goal" rows="4" style="padding: 12px; border: 2px solid #173F35; border-radius: 0; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-size: 16px; color: #2C2C2B; resize: vertical"></textarea>
 </div>
-<button type="button" id="bg-send" style="align-self: flex-start; min-height: 44px; padding: 0 24px; background: #173F35; color: #F4EBDD; border: 2px solid #173F35; font-family: Figtree, Arial, sans-serif; font-weight: 600; font-size: 16px; cursor: pointer">Express interest</button>
-<p style="margin: 0; font-size: 14px">[Enquiry destination and privacy wording to be confirmed before launch]</p>
+<button type="submit" id="bg-send" style="align-self: flex-start; min-height: 44px; padding: 0 24px; background: #173F35; color: #F4EBDD; border: 2px solid #173F35; font-family: Figtree, Arial, sans-serif; font-weight: 600; font-size: 16px; cursor: pointer">Express interest</button>
+<p id="bg-error" role="alert" hidden style="margin: 0; font-size: 15px; font-weight: 600; color: #985534">Something went wrong and your details weren’t sent. Please try again in a moment.</p>
+<p style="margin: 0; font-size: 14px">We’ll only use these details to reply to you about Beaver Guild.</p>
 </div>
-</div>
+</form>
 </div>
 </div>
 </section>
@@ -162,9 +164,19 @@
 </footer>
 </div>
 <script>
-(function(){var f=document.getElementById("bg-form"),s=document.getElementById("bg-sent");
-document.getElementById("bg-send").addEventListener("click",function(){f.hidden=true;s.hidden=false;});
-document.getElementById("bg-reset").addEventListener("click",function(){s.hidden=true;f.hidden=false;});})();
+(function(){
+var f=document.getElementById("bg-form"),s=document.getElementById("bg-sent"),err=document.getElementById("bg-error"),btn=document.getElementById("bg-send");
+f.addEventListener("submit",function(e){
+  e.preventDefault();
+  if(!f.checkValidity()){f.reportValidity();return;}
+  err.hidden=true;btn.disabled=true;btn.textContent="Sending…";
+  fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()})
+    .then(function(r){if(!r.ok)throw new Error(r.status);f.reset();f.hidden=true;s.hidden=false;s.querySelector("button").focus();})
+    .catch(function(){err.hidden=false;})
+    .finally(function(){btn.disabled=false;btn.textContent="Express interest";});
+});
+document.getElementById("bg-reset").addEventListener("click",function(){s.hidden=true;f.hidden=false;document.getElementById("bg-name").focus();});
+})();
 </script>
 </body>
 </html>

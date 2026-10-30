@@ -12,7 +12,8 @@ Plain HTML and CSS, with no build step. Netlify serves this folder as it is.
 | `pathways.html` | Tutorial Island, the practitioner and trainer pathways, and achievement badges |
 | `challenges.html` | Industry challenges and buildathons |
 | `about.html` | About Beaver Guild and the founder |
-| `get-involved.html` | Audiences, interest form (mock-up) and FAQs |
+| `get-involved.html` | Audiences, interest form (Netlify Forms) and FAQs |
+| `thanks.html` | Shown after the form is sent without JavaScript |
 | `404.html` | Not-found page |
 
 ## Assets
@@ -27,8 +28,11 @@ Plain HTML and CSS, with no build step. Netlify serves this folder as it is.
 2. Leave the build command empty. The publish directory is the repository root (`netlify.toml` sets it).
 3. Deploy. Every push to the main branch redeploys the site.
 
+## Interest form
+
+The form on `get-involved.html` is a Netlify Form named `express-interest` (fields: name, email, role, goal, plus a hidden honeypot against spam). Submissions appear in Netlify under **Forms**. Turn on form detection there once, and add an email notification under **Forms → Form notifications**.
+
 ## Before launch
 
-- The interest form on `get-involved.html` is a mock-up and sends nothing. Connect it to Netlify Forms or another destination, and add privacy wording.
 - Confirm permission from everyone in `assets/img/ttt-batch-1.jpg` before publishing.
 - Brand rules: Beaver Guild | Visual Identity & Writing Guide (Notion).
